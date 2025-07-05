@@ -252,13 +252,12 @@ def summary():
 
 @app.route('/export_pdf')
 def export_pdf():
-    try:
-        personal = session.get('personal', {})
-        income = session.get('income', {})
-        deductions = session.get('deductions', {})
-        depreciation = session.get('depreciation', {})
-        offsets = session.get('offsets', {})
-        result = calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal)
+    personal = session.get('personal', {})
+    income = session.get('income', {})
+    deductions = session.get('deductions', {})
+    depreciation = session.get('depreciation', {})
+    offsets = session.get('offsets', {})
+    result = calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal)
     
     # Create PDF using reportlab
     buffer = BytesIO()
@@ -339,10 +338,6 @@ def export_pdf():
     p.save()
     buffer.seek(0)
     return send_file(buffer, download_name='tax_summary.pdf', as_attachment=True)
-    except Exception as e:
-        # Log the error for debugging
-        print(f"PDF export error: {str(e)}")
-        return "Error generating PDF. Please try again.", 500
 
 @app.route('/reset')
 def reset():
