@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Deductions - SimpleTax AU{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+    <div class="progress-step completed">1</div>
+    <span>Personal Details</span>
+    <div class="progress-step completed">2</div>
+    <span>Income</span>
+    <div class="progress-step active">3</div>
+    <span>Deductions</span>
+    <div class="progress-step">4</div>
+    <span>Depreciation</span>
+    <div class="progress-step">5</div>
+    <span>Offsets</span>
+    <div class="progress-step">6</div>
+    <span>Summary</span>
+</div>
+
+<div class="form-container">
+    <h2 class="section-title"><i class="fas fa-minus-circle"></i> Deductions</h2>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-car"></i> Work-Related Car Expenses
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.car_expenses(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-home"></i> Home Office Expenses
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.home_office(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-graduation-cap"></i> Self-Education Expenses
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.self_education(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-tshirt"></i> Work-Related Clothing
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.work_clothing(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-tools"></i> Tools & Equipment
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.tools_equipment(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-phone"></i> Phone & Internet
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.phone_internet(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-book"></i> Professional Memberships
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.professional_memberships(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-plus-circle"></i> Other Deductions
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.other_deductions(class="form-control", placeholder="0.00") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <h4><i class="fas fa-calculator"></i> Deductions Summary</h4>
+            <div class="summary-item total">
+                <span>Total Deductions:</span>
+                <span id="total-deductions">$0.00</span>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i> Next: Depreciation
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Calculate total deductions in real-time
+function calculateTotal() {
+    const carExpenses = parseFloat(document.getElementById('car_expenses').value) || 0;
+    const homeOffice = parseFloat(document.getElementById('home_office').value) || 0;
+    const selfEducation = parseFloat(document.getElementById('self_education').value) || 0;
+    const workClothing = parseFloat(document.getElementById('work_clothing').value) || 0;
+    const toolsEquipment = parseFloat(document.getElementById('tools_equipment').value) || 0;
+    const phoneInternet = parseFloat(document.getElementById('phone_internet').value) || 0;
+    const professionalMemberships = parseFloat(document.getElementById('professional_memberships').value) || 0;
+    const otherDeductions = parseFloat(document.getElementById('other_deductions').value) || 0;
+    
+    const total = carExpenses + homeOffice + selfEducation + workClothing + 
+                  toolsEquipment + phoneInternet + professionalMemberships + otherDeductions;
+    document.getElementById('total-deductions').textContent = '$' + total.toFixed(2);
+}
+
+// Add event listeners to all deduction fields
+document.addEventListener('DOMContentLoaded', function() {
+    const deductionFields = ['car_expenses', 'home_office', 'self_education', 'work_clothing', 
+                            'tools_equipment', 'phone_internet', 'professional_memberships', 'other_deductions'];
+    deductionFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', calculateTotal);
+        }
+    });
+    calculateTotal();
+});
+</script>
+{% endblock %} 

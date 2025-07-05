@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Offsets & Rebates - SimpleTax AU{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+    <div class="progress-step completed">1</div>
+    <span>Personal Details</span>
+    <div class="progress-step completed">2</div>
+    <span>Income</span>
+    <div class="progress-step completed">3</div>
+    <span>Deductions</span>
+    <div class="progress-step completed">4</div>
+    <span>Depreciation</span>
+    <div class="progress-step active">5</div>
+    <span>Offsets</span>
+    <div class="progress-step">6</div>
+    <span>Summary</span>
+</div>
+
+<div class="form-container">
+    <h2 class="section-title"><i class="fas fa-gift"></i> Offsets & Rebates</h2>
+    
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <strong>Tax Offsets:</strong> These reduce your tax payable dollar for dollar, unlike deductions which reduce your taxable income.
+    </div>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-heart"></i> Private Health Insurance
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.private_health(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Premiums paid for private health insurance
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-hand-holding-heart"></i> Spouse Offset
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.spouse_offset(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Available if spouse has low or no income
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-graduation-cap"></i> Education Expenses
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.education_expenses(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Eligible education and training expenses
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-plus-circle"></i> Other Offsets
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.other_offsets(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Any other eligible tax offsets
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <h4><i class="fas fa-calculator"></i> Offsets Summary</h4>
+            <div class="summary-item total">
+                <span>Total Offsets:</span>
+                <span id="total-offsets">$0.00</span>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-calculator"></i> Calculate Tax Return
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Calculate total offsets in real-time
+function calculateTotal() {
+    const privateHealth = parseFloat(document.getElementById('private_health').value) || 0;
+    const spouseOffset = parseFloat(document.getElementById('spouse_offset').value) || 0;
+    const educationExpenses = parseFloat(document.getElementById('education_expenses').value) || 0;
+    const otherOffsets = parseFloat(document.getElementById('other_offsets').value) || 0;
+    
+    const total = privateHealth + spouseOffset + educationExpenses + otherOffsets;
+    document.getElementById('total-offsets').textContent = '$' + total.toFixed(2);
+}
+
+// Add event listeners to all offset fields
+document.addEventListener('DOMContentLoaded', function() {
+    const offsetFields = ['private_health', 'spouse_offset', 'education_expenses', 'other_offsets'];
+    offsetFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', calculateTotal);
+        }
+    });
+    calculateTotal();
+});
+</script>
+{% endblock %} 

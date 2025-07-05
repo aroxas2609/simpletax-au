@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Personal Details - SimpleTax AU{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+    <div class="progress-step active">1</div>
+    <span>Personal Details</span>
+    <div class="progress-step">2</div>
+    <span>Income</span>
+    <div class="progress-step">3</div>
+    <span>Deductions</span>
+    <div class="progress-step">4</div>
+    <span>Depreciation</span>
+    <div class="progress-step">5</div>
+    <span>Offsets</span>
+    <div class="progress-step">6</div>
+    <span>Summary</span>
+</div>
+
+<div class="form-container">
+    <h2 class="section-title"><i class="fas fa-user"></i> Personal Details</h2>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.full_name.label(class="form-label") }}
+                    {{ form.full_name(class="form-control", placeholder="Enter your full name") }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.dob.label(class="form-label") }}
+                    {{ form.dob(class="form-control") }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form.address.label(class="form-label") }}
+            {{ form.address(class="form-control", placeholder="Enter your residential address", rows="3") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.tfn.label(class="form-label") }}
+            {{ form.tfn(class="form-control", placeholder="Optional - Tax File Number") }}
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>Spouse Information:</strong> This information is used for Medicare Levy Surcharge calculations and spouse offset eligibility.
+        </div>
+        
+        <div class="form-check mb-3">
+            {{ form.has_spouse(class="form-check-input", id="has_spouse") }}
+            {{ form.has_spouse.label(class="form-check-label", for="has_spouse") }}
+        </div>
+        
+        <div id="spouse_fields" style="display: none;">
+            <div class="mb-3">
+                {{ form.spouse_taxable_income.label(class="form-label") }}
+                {{ form.spouse_taxable_income(class="form-control", placeholder="Enter spouse's taxable income") }}
+                <small class="form-text text-muted">
+                    <i class="fas fa-lightbulb"></i>
+                    This helps calculate Medicare Levy Surcharge for families and spouse offset eligibility.
+                </small>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i> Next: Income Details
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('has_spouse').addEventListener('change', function() {
+    var fields = document.getElementById('spouse_fields');
+    if (this.checked) {
+        fields.style.display = 'block';
+        fields.style.animation = 'fadeIn 0.3s ease-in';
+    } else {
+        fields.style.display = 'none';
+    }
+});
+
+// Add fade-in animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %} 

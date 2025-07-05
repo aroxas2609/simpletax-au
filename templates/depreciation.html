@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Depreciation - SimpleTax AU{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+    <div class="progress-step completed">1</div>
+    <span>Personal Details</span>
+    <div class="progress-step completed">2</div>
+    <span>Income</span>
+    <div class="progress-step completed">3</div>
+    <span>Deductions</span>
+    <div class="progress-step active">4</div>
+    <span>Depreciation</span>
+    <div class="progress-step">5</div>
+    <span>Offsets</span>
+    <div class="progress-step">6</div>
+    <span>Summary</span>
+</div>
+
+<div class="form-container">
+    <h2 class="section-title"><i class="fas fa-chart-line"></i> Depreciation Schedule</h2>
+    
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <strong>Depreciation Information:</strong> These amounts are added to your total deductions and can significantly reduce your taxable income.
+    </div>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-building"></i> Division 43 (Building Allowance)
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.division_43(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Depreciation on buildings and structural improvements
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-cogs"></i> Division 40 (Plant & Equipment)
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.division_40(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Depreciation on equipment, furniture, and fittings
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <h4><i class="fas fa-calculator"></i> Depreciation Summary</h4>
+            <div class="summary-item">
+                <span>Division 43 (Building):</span>
+                <span id="div43-amount">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Division 40 (Plant & Equipment):</span>
+                <span id="div40-amount">$0.00</span>
+            </div>
+            <div class="summary-item total">
+                <span>Total Depreciation:</span>
+                <span id="total-depreciation">$0.00</span>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i> Next: Offsets & Rebates
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Calculate total depreciation in real-time
+function calculateTotal() {
+    const div43 = parseFloat(document.getElementById('division_43').value) || 0;
+    const div40 = parseFloat(document.getElementById('division_40').value) || 0;
+    
+    document.getElementById('div43-amount').textContent = '$' + div43.toFixed(2);
+    document.getElementById('div40-amount').textContent = '$' + div40.toFixed(2);
+    document.getElementById('total-depreciation').textContent = '$' + (div43 + div40).toFixed(2);
+}
+
+// Add event listeners to depreciation fields
+document.addEventListener('DOMContentLoaded', function() {
+    const depreciationFields = ['division_43', 'division_40'];
+    depreciationFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', calculateTotal);
+        }
+    });
+    calculateTotal();
+});
+</script>
+{% endblock %} 

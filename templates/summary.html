@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Tax Summary - SimpleTax AU{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+    <div class="progress-step completed">1</div>
+    <span>Personal Details</span>
+    <div class="progress-step completed">2</div>
+    <span>Income</span>
+    <div class="progress-step completed">3</div>
+    <span>Deductions</span>
+    <div class="progress-step completed">4</div>
+    <span>Depreciation</span>
+    <div class="progress-step completed">5</div>
+    <span>Offsets</span>
+    <div class="progress-step active">6</div>
+    <span>Summary</span>
+</div>
+
+<div class="result-highlight {% if result.refund > 0 %}refund{% else %}owing{% endif %}">
+    <i class="fas fa-{% if result.refund > 0 %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+    {% if result.refund > 0 %}
+        You are entitled to a refund of <strong>${{ "%.2f"|format(result.refund) }}</strong>
+    {% else %}
+        You owe <strong>${{ "%.2f"|format(-result.refund) }}</strong>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="summary-card">
+            <h4><i class="fas fa-user"></i> Personal Information</h4>
+            <div class="summary-item">
+                <span>Name:</span>
+                <span>{{ personal.full_name }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Date of Birth:</span>
+                <span>{{ personal.dob }}</span>
+            </div>
+            {% if personal.has_spouse %}
+            <div class="summary-item">
+                <span>Spouse Income:</span>
+                <span>${{ "%.2f"|format(personal.spouse_taxable_income|float) if personal.spouse_taxable_income else "0.00" }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="summary-card">
+            <h4><i class="fas fa-dollar-sign"></i> Income Summary</h4>
+            <div class="summary-item">
+                <span>Salary/Wages:</span>
+                <span>${{ "%.2f"|format(income.salary|float) if income.salary else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Interest:</span>
+                <span>${{ "%.2f"|format(income.interest|float) if income.interest else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Dividends:</span>
+                <span>${{ "%.2f"|format(income.dividends|float) if income.dividends else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Rental:</span>
+                <span>${{ "%.2f"|format(income.rental|float) if income.rental else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Other Income:</span>
+                <span>${{ "%.2f"|format(income.other|float) if income.other else "0.00" }}</span>
+            </div>
+            <div class="summary-item total">
+                <span>Total Income:</span>
+                <span>${{ "%.2f"|format(result.total_income) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="summary-card">
+            <h4><i class="fas fa-minus-circle"></i> Deductions Summary</h4>
+            <div class="summary-item">
+                <span>Work Expenses:</span>
+                <span>${{ "%.2f"|format((deductions.car_expenses|float if deductions.car_expenses else 0) + (deductions.home_office|float if deductions.home_office else 0) + (deductions.work_clothing|float if deductions.work_clothing else 0) + (deductions.tools_equipment|float if deductions.tools_equipment else 0) + (deductions.phone_internet|float if deductions.phone_internet else 0)) }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Self-Education:</span>
+                <span>${{ "%.2f"|format(deductions.self_education|float) if deductions.self_education else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Professional Memberships:</span>
+                <span>${{ "%.2f"|format(deductions.professional_memberships|float) if deductions.professional_memberships else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Other Deductions:</span>
+                <span>${{ "%.2f"|format(deductions.other_deductions|float) if deductions.other_deductions else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Depreciation (Div 43):</span>
+                <span>${{ "%.2f"|format(depreciation.division_43|float) if depreciation.division_43 else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Depreciation (Div 40):</span>
+                <span>${{ "%.2f"|format(depreciation.division_40|float) if depreciation.division_40 else "0.00" }}</span>
+            </div>
+            <div class="summary-item total">
+                <span>Total Deductions:</span>
+                <span>${{ "%.2f"|format(result.total_deductions) }}</span>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h4><i class="fas fa-gift"></i> Offsets Summary</h4>
+            <div class="summary-item">
+                <span>Private Health:</span>
+                <span>${{ "%.2f"|format(offsets.private_health|float) if offsets.private_health else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Spouse Offset:</span>
+                <span>${{ "%.2f"|format(offsets.spouse_offset|float) if offsets.spouse_offset else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Education:</span>
+                <span>${{ "%.2f"|format(offsets.education_expenses|float) if offsets.education_expenses else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Other Offsets:</span>
+                <span>${{ "%.2f"|format(offsets.other_offsets|float) if offsets.other_offsets else "0.00" }}</span>
+            </div>
+            <div class="summary-item total">
+                <span>Total Offsets:</span>
+                <span>${{ "%.2f"|format(result.total_offsets) }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="summary-card">
+    <h4><i class="fas fa-calculator"></i> Tax Calculation Details</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="summary-item">
+                <span>Taxable Income:</span>
+                <span>${{ "%.2f"|format(result.taxable_income) }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Basic Tax:</span>
+                <span>${{ "%.2f"|format(result.basic_tax) }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Medicare Levy:</span>
+                <span>${{ "%.2f"|format(result.medicare_levy) }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Medicare Surcharge:</span>
+                <span>${{ "%.2f"|format(result.medicare_surcharge) }}</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="summary-item">
+                <span>Low Income Tax Offset:</span>
+                <span>-${{ "%.2f"|format(result.lito) }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Total Tax Payable:</span>
+                <span>${{ "%.2f"|format(result.total_tax_payable) }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Tax Withheld:</span>
+                <span>${{ "%.2f"|format(result.tax_withheld) }}</span>
+            </div>
+            <div class="summary-item total">
+                <span>Net Result:</span>
+                <span>${{ "%.2f"|format(result.refund) }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-center">
+    <a href="{{ url_for('export_pdf') }}" class="btn btn-success">
+        <i class="fas fa-file-pdf"></i> Export to PDF
+    </a>
+    <a href="{{ url_for('reset') }}" class="btn btn-secondary">
+        <i class="fas fa-redo"></i> Start New Return
+    </a>
+</div>
+{% endblock %} 
