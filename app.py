@@ -97,6 +97,10 @@ def offsets():
         return redirect(url_for('summary'))
     return render_template('offsets.html', form=form)
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal_info):
     # Parse and sum all income fields
     salary = float(income.get('salary') or 0)
