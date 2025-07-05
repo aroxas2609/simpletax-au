@@ -145,6 +145,25 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
     # Medicare levy (2%)
     medicare_levy = 0.02 * taxable_income
 
+    # Get spouse income for calculations
+    has_spouse = personal_info.get('has_spouse', False)
+    spouse_income_raw = personal_info.get('spouse_taxable_income')
+    if has_spouse and spouse_income_raw and spouse_income_raw != "" and str(spouse_income_raw).lower() != "none":
+        spouse_income = float(spouse_income_raw)
+    else:
+        spouse_income = 0
+    
+    # Calculate Spouse Tax Offset (if applicable)
+    spouse_offset_calculated = 0
+    if has_spouse and spouse_income > 0:
+        if spouse_income <= 10000:
+            spouse_offset_calculated = 2832
+        elif spouse_income <= 13000:
+            spouse_offset_calculated = 2832 - ((spouse_income - 10000) * 0.75)
+        else:
+            spouse_offset_calculated = 0
+        spouse_offset_calculated = max(0, spouse_offset_calculated)
+    
     # Medicare levy surcharge (if no private health)
     private_health_amount = float(offsets.get('private_health') or 0)
     has_private_health = private_health_amount > 0
@@ -152,20 +171,22 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
     
     if not has_private_health:
         # Use combined income for families (spouse + dependents)
-        has_spouse = personal_info.get('has_spouse', False)
-        spouse_income_raw = personal_info.get('spouse_taxable_income')
-        if has_spouse and spouse_income_raw and spouse_income_raw != "" and str(spouse_income_raw).lower() != "none":
-            spouse_income = float(spouse_income_raw)
-        else:
-            spouse_income = 0
         combined_income = taxable_income + spouse_income
-        family_threshold = 186000 if has_spouse else 93000  # Double threshold for families
         
-        if combined_income > family_threshold + 51000:  # 144k for singles, 186k + 51k = 237k for families
+        # Base threshold for families
+        family_threshold = 186000 if has_spouse else 93000
+        
+        # Add $1,500 per dependent child after the first (currently assuming no dependents)
+        # TODO: Add dependent children field to personal form if needed
+        # num_dependents = personal_info.get('num_dependents', 0)
+        # if num_dependents > 1:
+        #     family_threshold += (num_dependents - 1) * 1500
+        
+        if combined_income > family_threshold + 50999:  # 237k+ for families, 144k+ for singles
             medicare_surcharge = 0.015 * taxable_income
-        elif combined_income > family_threshold + 15000:  # 108k for singles, 186k + 15k = 201k for families
+        elif combined_income > family_threshold + 21599:  # 207k-237k for families, 114k-144k for singles
             medicare_surcharge = 0.0125 * taxable_income
-        elif combined_income > family_threshold:  # 93k for singles, 186k for families
+        elif combined_income > family_threshold:  # 186k-207k for families, 93k-114k for singles
             medicare_surcharge = 0.01 * taxable_income
 
     # Low Income Tax Offset (LITO)
@@ -180,10 +201,13 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
     lito = max(0, lito)
 
     # Total offsets
-    spouse_offset = float(offsets.get('spouse_offset') or 0)
+    manual_spouse_offset = float(offsets.get('spouse_offset') or 0)  # Keep for manual override
     education_expenses = float(offsets.get('education_expenses') or 0)
     other_offsets_amount = float(offsets.get('other_offsets') or 0)
-    total_offsets = lito + spouse_offset + education_expenses + other_offsets_amount
+    
+    # Use calculated spouse offset if no manual override provided
+    final_spouse_offset = manual_spouse_offset if manual_spouse_offset > 0 else spouse_offset_calculated
+    total_offsets = lito + final_spouse_offset + education_expenses + other_offsets_amount
 
     # Tax withheld
     tax_withheld = float(offsets.get('tax_withheld') or 0)
@@ -203,12 +227,14 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
         'medicare_levy': medicare_levy,
         'medicare_surcharge': medicare_surcharge,
         'lito': lito,
-        'spouse_offset': spouse_offset,
+        'spouse_offset': final_spouse_offset,
+        'spouse_offset_calculated': spouse_offset_calculated,
         'total_offsets': total_offsets,
         'total_tax_payable': total_tax_payable,
         'tax_withheld': tax_withheld,
         'refund': refund,
-        'has_spouse': has_spouse if 'has_spouse' in locals() else personal_info.get('has_spouse', False),
+        'has_spouse': has_spouse,
+        'spouse_income': spouse_income,
         'combined_income': combined_income if 'combined_income' in locals() else taxable_income
     }
 

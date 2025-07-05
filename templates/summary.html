@@ -131,7 +131,10 @@
             </div>
             <div class="summary-item">
                 <span>Spouse Offset:</span>
-                <span>${{ "%.2f"|format(offsets.spouse_offset|float) if offsets.spouse_offset else "0.00" }}</span>
+                <span>${{ "%.2f"|format(result.spouse_offset) }}</span>
+                {% if result.spouse_offset_calculated > 0 %}
+                <small class="text-muted d-block">(Auto-calculated: ${{ "%.2f"|format(result.spouse_offset_calculated) }})</small>
+                {% endif %}
             </div>
             <div class="summary-item">
                 <span>Education:</span>
@@ -168,6 +171,9 @@
             <div class="summary-item">
                 <span>Medicare Surcharge:</span>
                 <span>${{ "%.2f"|format(result.medicare_surcharge) }}</span>
+                {% if result.has_spouse and result.combined_income > 0 %}
+                <small class="text-muted d-block">(Based on combined income: ${{ "%.2f"|format(result.combined_income) }})</small>
+                {% endif %}
             </div>
         </div>
         <div class="col-md-6">
