@@ -4,18 +4,32 @@
 
 {% block content %}
 <div class="progress-container">
-    <div class="progress-step completed">1</div>
-    <span>Personal Details</span>
-    <div class="progress-step completed">2</div>
-    <span>Income</span>
-    <div class="progress-step completed">3</div>
-    <span>Deductions</span>
-    <div class="progress-step completed">4</div>
-    <span>Depreciation</span>
-    <div class="progress-step active">5</div>
-    <span>Offsets</span>
-    <div class="progress-step">6</div>
-    <span>Summary</span>
+    <div class="progress-steps">
+        <div class="progress-step completed">
+            <div class="progress-step-circle">1</div>
+            <div class="progress-step-label">Personal</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="progress-step-circle">2</div>
+            <div class="progress-step-label">Income</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="progress-step-circle">3</div>
+            <div class="progress-step-label">Deductions</div>
+        </div>
+        <div class="progress-step completed">
+            <div class="progress-step-circle">4</div>
+            <div class="progress-step-label">Depreciation</div>
+        </div>
+        <div class="progress-step active">
+            <div class="progress-step-circle">5</div>
+            <div class="progress-step-label">Offsets</div>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-circle">6</div>
+            <div class="progress-step-label">Summary</div>
+        </div>
+    </div>
 </div>
 
 <div class="form-container">
