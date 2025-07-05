@@ -153,7 +153,11 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
     if not has_private_health:
         # Use combined income for families (spouse + dependents)
         has_spouse = personal_info.get('has_spouse', False)
-        spouse_income = float(personal_info.get('spouse_taxable_income') or 0) if has_spouse else 0
+        spouse_income_raw = personal_info.get('spouse_taxable_income')
+        if has_spouse and spouse_income_raw and spouse_income_raw != "" and str(spouse_income_raw).lower() != "none":
+            spouse_income = float(spouse_income_raw)
+        else:
+            spouse_income = 0
         combined_income = taxable_income + spouse_income
         family_threshold = 186000 if has_spouse else 93000  # Double threshold for families
         

@@ -56,7 +56,7 @@
             {% if personal.has_spouse %}
             <div class="summary-item">
                 <span>Spouse Income:</span>
-                <span>${{ "%.2f"|format(personal.spouse_taxable_income|float) if personal.spouse_taxable_income and personal.spouse_taxable_income != "" else "0.00" }}</span>
+                <span>${{ "%.2f"|format(personal.spouse_taxable_income|float) if personal.spouse_taxable_income and personal.spouse_taxable_income != "" and personal.spouse_taxable_income != "None" else "0.00" }}</span>
             </div>
             {% endif %}
         </div>
