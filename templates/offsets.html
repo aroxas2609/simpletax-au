@@ -109,6 +109,24 @@
             </div>
         </div>
         
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-hand-holding-usd"></i> Tax Withheld
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.tax_withheld(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-lightbulb"></i>
+                        Total tax withheld from your income (PAYG, etc.)
+                    </small>
+                </div>
+            </div>
+        </div>
+        
         <div class="summary-card">
             <h4><i class="fas fa-calculator"></i> Offsets Summary</h4>
             <div class="summary-item total">

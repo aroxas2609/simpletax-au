@@ -106,6 +106,10 @@
                 <span>${{ "%.2f"|format(deductions.professional_memberships|float) if deductions.professional_memberships else "0.00" }}</span>
             </div>
             <div class="summary-item">
+                <span>Rental Property Expenses:</span>
+                <span>${{ "%.2f"|format(deductions.rental_expenses|float) if deductions.rental_expenses else "0.00" }}</span>
+            </div>
+            <div class="summary-item">
                 <span>Other Deductions:</span>
                 <span>${{ "%.2f"|format(deductions.other_deductions|float) if deductions.other_deductions else "0.00" }}</span>
             </div>
@@ -187,7 +191,7 @@
             </div>
             <div class="summary-item">
                 <span>Tax Withheld:</span>
-                <span>${{ "%.2f"|format(result.tax_withheld) }}</span>
+                <span>${{ "%.2f"|format(offsets.tax_withheld|float) if offsets.tax_withheld else "0.00" }}</span>
             </div>
             <div class="summary-item total">
                 <span>Net Result:</span>

@@ -128,6 +128,21 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">
+                        <i class="fas fa-building"></i> Rental Property Expenses
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.rental_expenses(class="form-control", placeholder="0.00") }}
+                    </div>
+                    <small class="form-text text-muted">Interest, repairs, management fees, etc.</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
                         <i class="fas fa-plus-circle"></i> Other Deductions
                     </label>
                     <div class="input-group">
@@ -166,17 +181,18 @@ function calculateTotal() {
     const toolsEquipment = parseFloat(document.getElementById('tools_equipment').value) || 0;
     const phoneInternet = parseFloat(document.getElementById('phone_internet').value) || 0;
     const professionalMemberships = parseFloat(document.getElementById('professional_memberships').value) || 0;
+    const rentalExpenses = parseFloat(document.getElementById('rental_expenses').value) || 0;
     const otherDeductions = parseFloat(document.getElementById('other_deductions').value) || 0;
     
     const total = carExpenses + homeOffice + selfEducation + workClothing + 
-                  toolsEquipment + phoneInternet + professionalMemberships + otherDeductions;
+                  toolsEquipment + phoneInternet + professionalMemberships + rentalExpenses + otherDeductions;
     document.getElementById('total-deductions').textContent = '$' + total.toFixed(2);
 }
 
 // Add event listeners to all deduction fields
 document.addEventListener('DOMContentLoaded', function() {
     const deductionFields = ['car_expenses', 'home_office', 'self_education', 'work_clothing', 
-                            'tools_equipment', 'phone_internet', 'professional_memberships', 'other_deductions'];
+                            'tools_equipment', 'phone_internet', 'professional_memberships', 'rental_expenses', 'other_deductions'];
     deductionFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {

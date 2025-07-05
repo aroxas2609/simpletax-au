@@ -36,6 +36,7 @@ class DeductionsForm(FlaskForm):
     tools_equipment = DecimalField('Tools & Equipment', validators=[Optional()])
     phone_internet = DecimalField('Phone & Internet', validators=[Optional()])
     professional_memberships = DecimalField('Professional Memberships', validators=[Optional()])
+    rental_expenses = DecimalField('Rental Property Expenses', validators=[Optional()])
     other_deductions = DecimalField('Other Deductions', validators=[Optional()])
     submit = SubmitField('Next')
 
@@ -118,8 +119,9 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
     tools_equipment = float(deductions.get('tools_equipment') or 0)
     phone_internet = float(deductions.get('phone_internet') or 0)
     professional_memberships = float(deductions.get('professional_memberships') or 0)
+    rental_expenses = float(deductions.get('rental_expenses') or 0)
     other_deductions = float(deductions.get('other_deductions') or 0)
-    total_deductions = car_expenses + home_office + self_education + work_clothing + tools_equipment + phone_internet + professional_memberships + other_deductions
+    total_deductions = car_expenses + home_office + self_education + work_clothing + tools_equipment + phone_internet + professional_memberships + rental_expenses + other_deductions
 
     # Add depreciation
     division_43 = float(depreciation.get('division_43') or 0)
@@ -209,7 +211,7 @@ def calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal
     final_spouse_offset = manual_spouse_offset if manual_spouse_offset > 0 else spouse_offset_calculated
     total_offsets = lito + final_spouse_offset + education_expenses + other_offsets_amount
 
-    # Tax withheld
+    # Tax withheld (from offsets form)
     tax_withheld = float(offsets.get('tax_withheld') or 0)
 
     # Total tax payable
