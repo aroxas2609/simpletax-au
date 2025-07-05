@@ -252,12 +252,13 @@ def summary():
 
 @app.route('/export_pdf')
 def export_pdf():
-    personal = session.get('personal', {})
-    income = session.get('income', {})
-    deductions = session.get('deductions', {})
-    depreciation = session.get('depreciation', {})
-    offsets = session.get('offsets', {})
-    result = calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal)
+    try:
+        personal = session.get('personal', {})
+        income = session.get('income', {})
+        deductions = session.get('deductions', {})
+        depreciation = session.get('depreciation', {})
+        offsets = session.get('offsets', {})
+        result = calculate_tax_au_2024_25(income, deductions, depreciation, offsets, personal)
     
     # Create PDF using reportlab
     buffer = BytesIO()
@@ -301,6 +302,8 @@ def export_pdf():
     p.drawString(50, height - 520, f"Other Deductions: ${deductions.get('other_deductions', 0)}")
     
     # Add depreciation if applicable
+    division_43 = float(depreciation.get('division_43') or 0)
+    division_40 = float(depreciation.get('division_40') or 0)
     has_depreciation = division_43 > 0 or division_40 > 0
     if has_depreciation:
         p.drawString(50, height - 540, f"Division 43 depreciation: ${division_43}")
@@ -336,6 +339,10 @@ def export_pdf():
     p.save()
     buffer.seek(0)
     return send_file(buffer, download_name='tax_summary.pdf', as_attachment=True)
+    except Exception as e:
+        # Log the error for debugging
+        print(f"PDF export error: {str(e)}")
+        return "Error generating PDF. Please try again.", 500
 
 @app.route('/reset')
 def reset():
